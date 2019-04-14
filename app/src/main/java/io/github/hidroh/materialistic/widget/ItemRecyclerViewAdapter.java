@@ -234,7 +234,7 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
             mPopupMenu.create(mContext, holder.mMoreButton, Gravity.NO_GRAVITY)
                 .inflate(R.menu.menu_contextual_comment)
                 .setOnMenuItemClickListener(menuItem -> {
-                    if (menuItem.getItemId() == R.id.menu_contextual_vote) {
+                    if (menuItem.getItemId() == R.id.menu_contextual_vote_up) {
                         vote(item);
                         return true;
                     }
