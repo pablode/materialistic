@@ -235,7 +235,11 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                 .inflate(R.menu.menu_contextual_comment)
                 .setOnMenuItemClickListener(menuItem -> {
                     if (menuItem.getItemId() == R.id.menu_contextual_vote_up) {
-                        vote(item);
+                        voteUp(item);
+                        return true;
+                    }
+                    if (menuItem.getItemId() == R.id.menu_contextual_vote_down) {
+                        voteDown(item);
                         return true;
                     }
                     if (menuItem.getItemId() == R.id.menu_contextual_comment) {
@@ -257,8 +261,12 @@ public abstract class ItemRecyclerViewAdapter<VH extends ItemRecyclerViewAdapter
                 .show());
     }
 
-    private void vote(final Item item) {
+    private void voteUp(final Item item) {
         mUserServices.voteUp(mContext, item.getId(), new VoteCallback(this));
+    }
+
+    private void voteDown(final Item item) {
+        mUserServices.voteDown(mContext, item.getId(), new VoteCallback(this));
     }
 
     @Synthetic

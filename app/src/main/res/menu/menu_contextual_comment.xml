@@ -20,6 +20,9 @@
         android:id="@id/menu_contextual_vote_up"
         android:title="@string/vote_up" />
     <item
+        android:id="@id/menu_contextual_vote_down"
+        android:title="@string/vote_down" />
+    <item
         android:id="@id/menu_contextual_comment"
         android:title="@string/add_comment" />
     <item

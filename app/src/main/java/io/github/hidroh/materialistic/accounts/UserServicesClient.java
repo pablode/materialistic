@@ -63,6 +63,7 @@ public class UserServicesClient implements UserServices {
     private static final String SUBMIT_PARAM_FNID = "fnid";
     private static final String SUBMIT_PARAM_FNOP = "fnop";
     private static final String VOTE_DIR_UP = "up";
+    private static final String VOTE_DIR_DOWN = "down";
     private static final String DEFAULT_REDIRECT = "news";
     private static final String CREATING_TRUE = "t";
     private static final String DEFAULT_FNOP = "submit-page";
@@ -102,7 +103,21 @@ public class UserServicesClient implements UserServices {
             return false;
         }
         Toast.makeText(context, R.string.sending, Toast.LENGTH_SHORT).show();
-        execute(postVote(credentials.first, credentials.second, itemId))
+        execute(postUpVote(credentials.first, credentials.second, itemId))
+                .map(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback::onDone, callback::onError);
+        return true;
+    }
+
+    @Override
+    public boolean voteDown(Context context, String itemId, Callback callback) {
+        Pair<String, String> credentials = AppUtils.getCredentials(context);
+        if (credentials == null) {
+            return false;
+        }
+        Toast.makeText(context, R.string.sending, Toast.LENGTH_SHORT).show();
+        execute(postDownVote(credentials.first, credentials.second, itemId))
                 .map(response -> response.code() == HttpURLConnection.HTTP_MOVED_TEMP)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(callback::onDone, callback::onError);
@@ -190,7 +205,7 @@ public class UserServicesClient implements UserServices {
                 .build();
     }
 
-    private Request postVote(String username, String password, String itemId) {
+    private Request postUpVote(String username, String password, String itemId) {
         return new Request.Builder()
                 .url(HttpUrl.parse(BASE_WEB_URL)
                         .newBuilder()
@@ -201,6 +216,21 @@ public class UserServicesClient implements UserServices {
                         .add(LOGIN_PARAM_PW, password)
                         .add(VOTE_PARAM_ID, itemId)
                         .add(VOTE_PARAM_HOW, VOTE_DIR_UP)
+                        .build())
+                .build();
+    }
+
+    private Request postDownVote(String username, String password, String itemId) {
+        return new Request.Builder()
+                .url(HttpUrl.parse(BASE_WEB_URL)
+                        .newBuilder()
+                        .addPathSegment(VOTE_PATH)
+                        .build())
+                .post(new FormBody.Builder()
+                        .add(LOGIN_PARAM_ACCT, username)
+                        .add(LOGIN_PARAM_PW, password)
+                        .add(VOTE_PARAM_ID, itemId)
+                        .add(VOTE_PARAM_HOW, VOTE_DIR_DOWN)
                         .build())
                 .build();
     }
